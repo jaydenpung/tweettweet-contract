@@ -20,7 +20,9 @@ contract TweetTweet {
         console.log("Deploying contract");
     }
 
-    function addTweet(string memory _message) public {
+    function addTweet(string memory _message) public payable {
+        require(msg.value == 0.0001 ether, "Need to pay 0.0001 ether to tweet!");
+
         Tweet memory tweet = Tweet(msg.sender, _message, block.timestamp);
         tweets.push(tweet);
 

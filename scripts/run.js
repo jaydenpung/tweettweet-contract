@@ -15,15 +15,17 @@ const main = async () => {
     console.log("Contract deployed by: ", owner.address);
 
     // add tweet
-    let addTweetTxn = await tweetContract.addTweet("Hello this is the owner!"); // by owner
+    const payment = {value: ethers.utils.parseEther("0.0001")};
+
+    let addTweetTxn = await tweetContract.addTweet("Hello this is the owner!", payment); // by owner
     await addTweetTxn.wait();
     console.log("Sent tweet!");
 
-    addTweetTxn = await tweetContract.connect(randomPersonOne).addTweet("Hello this is randomPersonOne!");
+    addTweetTxn = await tweetContract.connect(randomPersonOne).addTweet("Hello this is randomPersonOne!", payment);
     await addTweetTxn.wait();
     console.log("Sent tweet!");
 
-    addTweetTxn = await tweetContract.connect(randomPersonTwo).addTweet("Hello this is randomPersonTwo!");
+    addTweetTxn = await tweetContract.connect(randomPersonTwo).addTweet("Hello this is randomPersonTwo!", payment);
     await addTweetTxn.wait();
     console.log("Sent tweet!");
 
