@@ -10,12 +10,20 @@ const main = async () => {
     let contractBalance = await hre.ethers.provider.getBalance(tweetContract.address);
     console.log("Contract balance:", hre.ethers.utils.formatEther(contractBalance));
 
+    // get addresses from hardhat node
+    const [owner, randomPersonOne, randomPersonTwo] = await hre.ethers.getSigners();
+    console.log("Contract deployed by: ", owner.address);
+
     // add tweet
-    let addTweetTxn = await tweetContract.addTweet("Hello this is my tweet 1!");
+    let addTweetTxn = await tweetContract.addTweet("Hello this is the owner!"); // by owner
     await addTweetTxn.wait();
     console.log("Sent tweet!");
 
-    addTweetTxn = await tweetContract.addTweet("Hello this is my tweet 2!");
+    addTweetTxn = await tweetContract.connect(randomPersonOne).addTweet("Hello this is randomPersonOne!");
+    await addTweetTxn.wait();
+    console.log("Sent tweet!");
+
+    addTweetTxn = await tweetContract.connect(randomPersonTwo).addTweet("Hello this is randomPersonTwo!");
     await addTweetTxn.wait();
     console.log("Sent tweet!");
 
