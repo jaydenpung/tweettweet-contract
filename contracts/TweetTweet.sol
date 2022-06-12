@@ -42,7 +42,7 @@ contract TweetTweet {
         }
 
         address targetWallet = selectedTweet.author;
-        (bool success, ) = (targetWallet).call{value: 1000}("");
+        (bool success, ) = (targetWallet).call{value: 1000 * 0.5}("");
 
         require(success, "Failed to transfer amount to author!");
     }

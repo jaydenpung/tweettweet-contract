@@ -59,7 +59,7 @@ describe("Tweet Contract", function () {
             let balance = await hre.ethers.provider.getBalance(randomOne.address);
 
             // author of the tweet (randomOne) should get the payment
-            expect(balance).equals(initialBalance.add(likeTweetPaymentAmountInWei));
+            expect(balance).equals(initialBalance.add(likeTweetPaymentAmountInWei * 0.5));
         })
     })
 });
