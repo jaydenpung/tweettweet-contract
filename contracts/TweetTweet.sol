@@ -2,8 +2,9 @@
 pragma solidity ^0.8.0;
 
 import "hardhat/console.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 
-contract TweetTweet {
+contract TweetTweet is Ownable {
 
     //for front end
     event NewTweet(address indexed from, string message, uint timestamp);
@@ -16,15 +17,27 @@ contract TweetTweet {
         uint likeCount;
     }
 
-    uint tweetIdCounter;
+    uint private tweetIdCounter;
     Tweet[] public tweets;
+    uint public addTweetPrice; //setting it public will create getter which can be called with contractname.addTweetPrice()
+    uint public likeTweetPrice;
 
     constructor() payable {
-        console.log("Deploying contract");
+        //console.log("Deploying contract");
+        addTweetPrice = 0.0001 ether;
+        likeTweetPrice = 1000 wei;
+    }
+
+    function setAddTweetPrice(uint priceInWei) external onlyOwner() {
+        addTweetPrice = priceInWei;
+    }
+
+    function setLikeTweetPrice(uint priceInWei) external onlyOwner() {
+        likeTweetPrice = priceInWei;
     }
 
     function addTweet(string memory _message) public payable {
-        require(msg.value == 0.0001 ether, "Need to pay 0.0001 ether to tweet!");
+        require(msg.value == addTweetPrice, "Insufficient payment to add a tweet!");
 
         Tweet memory tweet = Tweet(tweetIdCounter++, msg.sender, _message, block.timestamp, 0);
         tweets.push(tweet);
@@ -33,7 +46,7 @@ contract TweetTweet {
     }
 
     function likeTweet(uint tweetId) public payable {
-        require(msg.value == 1000 wei, "Need to pay 1000 wei to like a tweet!");
+        require(msg.value == 1000 wei, "Insufficient payment to like a tweet!");
         Tweet storage selectedTweet = tweets[tweetId];
 
         // if like count reach max, we don't want it to overflow and fail

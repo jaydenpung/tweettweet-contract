@@ -26,7 +26,7 @@ describe("Tweet Contract", function () {
     describe("Add tweet", function () {
         it("Tweeting without payment", async function () {
             let addTweetTxn = tweetContract.addTweet("Tweeting without payment!");
-            expect(addTweetTxn).to.be.revertedWith("Need to pay 0.0001 ether to tweet!");
+            expect(addTweetTxn).to.be.revertedWith("Insufficient payment to tweet!");
         });
 
         it("Tweeting with payment", async function () {
@@ -47,7 +47,7 @@ describe("Tweet Contract", function () {
     describe("Like tweet", function () {
         it("Like tweet without payment", async function () {
             let likeTweetTxn = tweetContract.likeTweet(1); // owner liking the second tweet by randomOne
-            expect(likeTweetTxn).to.be.revertedWith("Need to pay 1000 wei to like a tweet!");
+            expect(likeTweetTxn).to.be.revertedWith("Insufficient payment to like a tweet!");
         })
 
         it("Like tweet with payment", async function () {
@@ -60,6 +60,28 @@ describe("Tweet Contract", function () {
 
             // author of the tweet (randomOne) should get the payment
             expect(balance).equals(initialBalance.add(likeTweetPaymentAmountInWei * 0.5));
+        })
+    })
+
+    describe("Set add and like tweet prices", function () {
+        it("Owner set add tweet price", async function () {
+            await tweetContract.setAddTweetPrice(100);
+            expect(await tweetContract.addTweetPrice()).to.be.equals(100);
+        })
+
+        it("Not Owner set add tweet price", async function () {
+            let transaction = tweetContract.connect(randomOne).setAddTweetPrice(100);
+            expect(transaction).to.be.revertedWith("Ownable: caller is not the owner");
+        })
+
+        it("Owner set like tweet price", async function () {
+            await tweetContract.setLikeTweetPrice(100);
+            expect(await tweetContract.likeTweetPrice()).to.be.equals(100);
+        })
+
+        it("Not Owner set like tweet price", async function () {
+            let transaction = tweetContract.connect(randomOne).setLikeTweetPrice(100);
+            expect(transaction).to.be.revertedWith("Ownable: caller is not the owner");
         })
     })
 });
